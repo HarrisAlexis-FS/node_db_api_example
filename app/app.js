@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+require("dotenv").config();
 const morgan = require("morgan");
 const mongoose = require('mongoose');
 const authorRoutes = require("../api routes/authors");
@@ -56,14 +57,21 @@ app.use((req, res, next) => {
     })
 });
 
-main().catch(err => console.log(err));
-
 //connect to mongoDB
-async function main() {
-    await mongoose.connect('mongodb://127.0.0.1:27017/library');
+mongoose.connect(
+    'mongodb://127.0.0.1:27017/collection', 
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    }
+  );
+  const db = mongoose.connection;
+  db.on("error", () => console.error("connection error: "));
+  db.once("open", () => {
+    console.log("Connected successfully to MongoDB!");
+  });
   
- 
-  }
+
 
 
 module.exports = app;
